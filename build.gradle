@@ -1,0 +1,90 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'maven'
+apply plugin: 'signing'
+apply plugin: 'project-reports'
+apply plugin: 'osgi'
+
+group = 'com.101tec'
+version = '0.11-dev'
+sourceCompatibility = 1.6
+
+jar {
+    manifest {
+        instruction 'Import-Package', '!org.apache.jute,!org.apache.zookeeper.proto, *'
+    }
+}
+
+
+//--------------------
+// Dependencies
+//--------------------
+repositories {
+    flatDir(dirs: 'lib')
+    // mavenCentral()
+    // maven {
+    //     url "https://oss.sonatype.org/content/repositories/com101tec-553"
+    //}
+}
+dependencies {
+    compile 'org.apache.zookeeper:zookeeper:3.4.8'
+    compile 'org.slf4j:slf4j-api:1.6.1'
+
+    testCompile 'commons-io:commons-io:1.4'
+    testCompile 'junit:junit:4.12'
+    testCompile ('log4j:log4j:1.2.15') {
+        exclude group: "com.sun.jdmk", module: "jmxtools"
+        exclude group: "com.sun.jmx", module: "jmxri"
+        exclude group: "javax.jms", module: "jms"
+    }
+    testCompile 'org.assertj:assertj-core:2.0.0'
+    testCompile 'org.mockito:mockito-core:1.8.0'
+    testCompile 'org.slf4j:slf4j-log4j12:1.6.1'
+
+    //dependencies of mockito
+    testCompile files('lib/objenesis-1.0.jar', 'lib/hamcrest-core-1.1.jar')
+}
+
+
+//--------------------
+// Source Jar
+//--------------------
+task sourceJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+task javadocJar(type: Jar, dependsOn:javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+artifacts {
+    archives sourceJar
+    archives javadocJar
+}
+task jars(dependsOn: ['jar', 'sourceJar'], description: 'Build jar & source jar') << {}
+
+
+//--------------------
+// Eclipse Setup
+//--------------------
+eclipse {
+    classpath { defaultOutputDir = file('build-eclipse') }
+}
+
+task eclipseJdtPrepare(type: Copy) {
+    from rootProject.file('src/build/eclipse/org.eclipse.jdt.core.prefs')
+    into project.file('.settings/')
+}
+tasks["eclipseJdt"].dependsOn(eclipseJdtPrepare)
+
+
+
+
+
+
+//--------------------
+// Util methods
+//--------------------
+task wrapper(type: Wrapper, description: 'Generate the Gradle Wrapper') { gradleVersion = '1.3' }
+
