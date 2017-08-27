@@ -1,4 +1,4 @@
-package org.I0Itec.zkclient;
+package org.I0Itec.test;
 
 import java.io.Serializable;
 

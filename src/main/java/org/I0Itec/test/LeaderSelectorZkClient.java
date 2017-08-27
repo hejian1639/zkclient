@@ -1,4 +1,4 @@
-package org.I0Itec.zkclient;
+package org.I0Itec.test;
 
 import org.I0Itec.zkclient.ZkClient;
 import org.I0Itec.zkclient.serialize.SerializableSerializer;
@@ -14,7 +14,7 @@ import java.util.List;
 public class LeaderSelectorZkClient {
 
     //启动的服务个数
-    private static final int        CLIENT_QTY = 10;
+    private static final int        CLIENT_QTY = 2;
     //zookeeper服务器的地址
     private static final String     ZOOKEEPER_SERVER = "192.168.1.107:2181";
 
